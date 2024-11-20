@@ -162,11 +162,17 @@ class _CollectionPageState extends State<CollectionPage> {
                         final int cardsAdded = await Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const CardPage()),
+                              builder: (context) => CardPage(
+                                    collections[index],
+                                  )),
                         );
 
-                        collections[index].amount += cardsAdded;
-                        helper.updateCollection(collections[index]);
+                        print("cardsAdded: $cardsAdded");
+
+                        setState(() {
+                          collections[index].amount += cardsAdded;
+                          helper.updateCollection(collections[index]);
+                        });
 
                         // ignore: use_build_context_synchronously
                         Navigator.pop(context);
@@ -330,7 +336,8 @@ class _CollectionPageState extends State<CollectionPage> {
                       const SizedBox(height: 16.0),
                       GestureDetector(
                         onTap: () {
-                          ImagePicker.pickImage(source: ImageSource.gallery)
+                          ImagePicker().pickImage(source: ImageSource.gallery)
+                              // ImagePicker.pickImage(source: ImageSource.gallery)
                               .then((file) {
                             setState(() {
                               editedColection.image = file.path;
@@ -392,7 +399,9 @@ class _CollectionPageState extends State<CollectionPage> {
                                       backgroundColor: CustomColors.dark),
                                   child: const Text(
                                     "Ok!",
-                                    style: TextStyle(color: CustomColors.light, fontSize: 16.0),
+                                    style: TextStyle(
+                                        color: CustomColors.light,
+                                        fontSize: 16.0),
                                   ),
                                 )
                               ],
