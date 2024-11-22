@@ -278,7 +278,7 @@ class _CollectionPageState extends State<CollectionPage> {
                       const SizedBox(height: 16.0),
                       CustomImagePicker(
                         onTap: () {
-                          ImagePicker.pickImage(source: ImageSource.gallery)
+                          ImagePicker().pickImage(source: ImageSource.gallery)
                               .then((file) {
                             setState(() {
                               editedColection.image = file.path;
