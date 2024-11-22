@@ -167,11 +167,10 @@ class _CollectionPageState extends State<CollectionPage> {
                                   )),
                         );
 
-                        print("cardsAdded: $cardsAdded");
-
                         setState(() {
-                          collections[index].amount += cardsAdded;
-                          helper.updateCollection(collections[index]);
+                          getAllCollections();
+                          // collections[index].amount += cardsAdded;
+                          // helper.updateCollection(collections[index]);
                         });
 
                         // ignore: use_build_context_synchronously
