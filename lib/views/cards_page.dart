@@ -50,14 +50,8 @@ class _CardPageState extends State<CardPage> {
   void initState() {
     super.initState();
 
-    collectionName = "${widget.collection.name}, id: ${widget.collection.id}";
+    collectionName = widget.collection.name;
     getAllCards();
-
-    cardHelper.getAllCardsOfAllCollections().then((list){
-      for(Card element in list){
-        print(element);
-      }
-    });
   }
 
   void getAllCards() {
@@ -230,7 +224,7 @@ class _CardPageState extends State<CardPage> {
                             cardHelper.saveCard(newCard);
                             Collection updatedCollection = Collection();
                             updatedCollection.amount =
-                                widget.collection.amount + 1;
+                                widget.collection.amount + cardsAdded;
                             updatedCollection.id = widget.collection.id;
                             updatedCollection.image = widget.collection.image;
                             updatedCollection.name = widget.collection.name;
@@ -269,7 +263,7 @@ class _CardPageState extends State<CardPage> {
                               cardsAdded--;
                               Collection updatedCollection = Collection();
                               updatedCollection.amount =
-                                  widget.collection.amount - 1;
+                                  widget.collection.amount + cardsAdded;
                               updatedCollection.id = widget.collection.id;
                               updatedCollection.image = widget.collection.image;
                               updatedCollection.name = widget.collection.name;

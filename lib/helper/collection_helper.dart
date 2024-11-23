@@ -23,6 +23,7 @@ class CollectionHelper {
 
   Future<Database> get db async {
     _db ??= await initdb();
+    _db.execute("PRAGMA foreign_keys = ON;");
     // _db.execute("DROP TABLE $collectionTable");
     // _db.execute(
     //     "CREATE TABLE $collectionTable($idColumn INTEGER PRIMARY KEY, $nameColumn TEXT NOT NULL, $amountColumn INTEGER NOT NULL DEFAULT (0), $imageColumn TEXT)");
