@@ -151,17 +151,27 @@ class _CollectionPageState extends State<CollectionPage> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  CustomButton(
-                    onTap: () async {
-                      // go to card page
-                      final int cardsAdded = await Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const CardPage()),
-                      );
+                  Container(
+                    height: 60.0,
+                    decoration: const BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                      color: CustomColors.light,
+                    ),
+                    width: 350.0,
+                    child: TextButton(
+                      onPressed: () async {
+                        // go to card page
+                        final int cardsAdded = await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => CardPage(
+                                    collections[index],
+                                  )),
+                        );
 
-                      collections[index].amount += cardsAdded;
-                      helper.updateCollection(collections[index]);
+                        setState(() {
+                          getAllCollections();
+                        });
 
                       // ignore: use_build_context_synchronously
                       Navigator.pop(context);

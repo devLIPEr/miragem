@@ -3,11 +3,17 @@ import 'dart:async';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
+String cardTable = "cardTable";
 String collectionTable = "collectionTable";
+
 String idColumn = "idColumn";
 String nameColumn = "nameColumn";
 String amountColumn = "amountColumn";
 String imageColumn = "imageColumn";
+String collectionIdColumn = "collectionIdColumn";
+String qualityColumn = "qualityColumn";
+String quantityColumn = "quantityColumn";
+String idiomColumn = "idiomColumn";
 
 class CollectionHelper {
   static final CollectionHelper _instance = CollectionHelper.internal();
@@ -17,6 +23,7 @@ class CollectionHelper {
 
   Future<Database> get db async {
     _db ??= await initdb();
+    _db.execute("PRAGMA foreign_keys = ON;");
     // _db.execute("DROP TABLE $collectionTable");
     // _db.execute(
     //     "CREATE TABLE $collectionTable($idColumn INTEGER PRIMARY KEY, $nameColumn TEXT NOT NULL, $amountColumn INTEGER NOT NULL DEFAULT (0), $imageColumn TEXT)");
@@ -31,7 +38,8 @@ class CollectionHelper {
       version: 1,
       onCreate: (Database db, int newVersion) async {
         await db.execute(
-            "CREATE TABLE $collectionTable($idColumn INTEGER PRIMARY KEY, $nameColumn TEXT NOT NULL, $amountColumn INTEGER NOT NULL DEFAULT (0), $imageColumn TEXT)");
+            "CREATE TABLE $collectionTable($idColumn INTEGER PRIMARY KEY, $nameColumn TEXT NOT NULL, $amountColumn INTEGER NOT NULL DEFAULT (0), $imageColumn TEXT);");
+        await db.execute("CREATE TABLE $cardTable($idColumn INTEGER PRIMARY KEY, $collectionIdColumn INTEGER REFERENCES $collectionTable($idColumn) ON DELETE CASCADE, $nameColumn TEXT NOT NULL, $imageColumn TEXT, $qualityColumn INTEGER, $quantityColumn INTEGER, $idiomColumn INTEGER);");
       },
     );
   }
