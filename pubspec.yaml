@@ -38,7 +38,6 @@ dependencies:
   cupertino_icons: ^1.0.2
   sqflite: ^1.1.5
   image_picker: ^0.8.5
-  # image_picker: ^0.6.7+22
   path: ^1.8.2
 
 dev_dependencies:

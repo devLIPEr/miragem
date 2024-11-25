@@ -3,6 +3,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:miragem/common/alert.dart';
 import 'package:miragem/common/custom_colors.dart';
+import 'package:miragem/components/custom_button.dart';
+import 'package:miragem/components/custom_imagepicker.dart';
+import 'package:miragem/components/custom_textfield.dart';
 import 'package:miragem/helper/collection_helper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:miragem/views/cards_page.dart';
@@ -82,8 +85,7 @@ class _CollectionPageState extends State<CollectionPage> {
         showEditOpts(context, index);
       },
       child: Card(
-        shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(8.0))),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
         color: CustomColors.highlight,
         child: Padding(
           padding: const EdgeInsets.all(4.0),
@@ -169,106 +171,75 @@ class _CollectionPageState extends State<CollectionPage> {
 
                         setState(() {
                           getAllCollections();
-                          // collections[index].amount += cardsAdded;
-                          // helper.updateCollection(collections[index]);
                         });
 
-                        // ignore: use_build_context_synchronously
-                        Navigator.pop(context);
-                      },
-                      child: const Text(
-                        "Visualizar",
-                        style: TextStyle(
-                          color: CustomColors.dark,
-                          fontSize: 20.0,
-                        ),
-                      ),
-                    ),
+                      // ignore: use_build_context_synchronously
+                      Navigator.pop(context);
+                    },
+                    height: 60.0,
+                    width: 350.0,
+                    text: "Visualizar",
                   ),
                   const SizedBox(height: 16.0),
-                  Container(
+                  CustomButton(
+                    onTap: () {
+                      Navigator.pop(context);
+                      showOpts(context, collection: collections[index]);
+                    },
                     height: 60.0,
-                    decoration: const BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                      color: CustomColors.light,
-                    ),
                     width: 350.0,
-                    child: TextButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                        showOpts(context, collection: collections[index]);
-                      },
-                      child: const Text(
-                        "Editar",
-                        style: TextStyle(
-                          color: CustomColors.dark,
-                          fontSize: 20.0,
-                        ),
-                      ),
-                    ),
+                    text: "Editar",
                   ),
                   const SizedBox(height: 16.0),
-                  Container(
+                  CustomButton(
+                    onTap: () {
+                      customAlert(
+                        context,
+                        "Tem certeza?",
+                        24.0,
+                        "Você tem certeza que quer excluir a coleção ${collections[index].name}?\nEste processo não pode ser revertido!",
+                        20.0,
+                        [
+                          ElevatedButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                              Navigator.pop(context);
+                            },
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor: CustomColors.dark),
+                            child: const Text(
+                              "Cancelar",
+                              style: TextStyle(
+                                color: CustomColors.light,
+                                fontSize: 16.0,
+                              ),
+                            ),
+                          ),
+                          ElevatedButton(
+                            onPressed: () {
+                              helper.deleteCollection(collections[index].id);
+                              setState(() {
+                                collections.removeAt(index);
+                              });
+                              Navigator.pop(context);
+                              Navigator.pop(context);
+                            },
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor: CustomColors.alert),
+                            child: const Text(
+                              "Deletar",
+                              style: TextStyle(
+                                color: CustomColors.light,
+                                fontSize: 16.0,
+                              ),
+                            ),
+                          ),
+                        ],
+                      );
+                    },
                     height: 60.0,
-                    decoration: const BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                      color: CustomColors.light,
-                    ),
                     width: 350.0,
-                    child: TextButton(
-                      onPressed: () {
-                        customAlert(
-                          context,
-                          "Tem certeza?",
-                          24.0,
-                          "Você tem certeza que quer excluir a coleção ${collections[index].name}?\nEste processo não pode ser revertido!",
-                          20.0,
-                          [
-                            ElevatedButton(
-                              onPressed: () {
-                                Navigator.pop(context);
-                                Navigator.pop(context);
-                              },
-                              style: ElevatedButton.styleFrom(
-                                  backgroundColor: CustomColors.dark),
-                              child: const Text(
-                                "Cancelar",
-                                style: TextStyle(
-                                  color: CustomColors.light,
-                                  fontSize: 16.0,
-                                ),
-                              ),
-                            ),
-                            ElevatedButton(
-                              onPressed: () {
-                                helper.deleteCollection(collections[index].id);
-                                setState(() {
-                                  collections.removeAt(index);
-                                });
-                                Navigator.pop(context);
-                                Navigator.pop(context);
-                              },
-                              style: ElevatedButton.styleFrom(
-                                  backgroundColor: CustomColors.alert),
-                              child: const Text(
-                                "Deletar",
-                                style: TextStyle(
-                                  color: CustomColors.light,
-                                  fontSize: 16.0,
-                                ),
-                              ),
-                            ),
-                          ],
-                        );
-                      },
-                      child: const Text(
-                        "Deletar",
-                        style: TextStyle(
-                          color: CustomColors.dark,
-                          fontSize: 20.0,
-                        ),
-                      ),
-                    ),
+                    text: "Deletar",
                   ),
                 ],
               ),
@@ -301,77 +272,34 @@ class _CollectionPageState extends State<CollectionPage> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Container(
+                      CustomTextField(
+                        controller: nameController,
+                        hintText: "Nome da Coleção...",
+                        obscureText: false,
                         height: 60.0,
                         width: 350.0,
-                        padding: const EdgeInsets.all(4.0),
-                        decoration: const BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                          color: CustomColors.light,
-                        ),
-                        child: TextField(
-                          controller: nameController,
-                          cursorColor: CustomColors.dark,
-                          decoration: const InputDecoration(
-                            border: InputBorder.none,
-                            label: Text("Nome da Coleção..."),
-                            floatingLabelStyle: TextStyle(
-                              color: CustomColors.dark,
-                            ),
-                            focusColor: CustomColors.dark,
-                          ),
-                          style: const TextStyle(
-                            color: CustomColors.dark,
-                            fontSize: 20.0,
-                          ),
-                          onChanged: (value) {
-                            collectionEdited = true;
-                            setState(() {
-                              editedColection.name = value;
-                            });
-                          },
-                        ),
+                        onChanged: (value) {
+                          collectionEdited = true;
+                          setState(() {
+                            editedColection.name = value;
+                          });
+                        },
                       ),
                       const SizedBox(height: 16.0),
-                      GestureDetector(
+                      CustomImagePicker(
                         onTap: () {
                           ImagePicker().pickImage(source: ImageSource.gallery)
-                              // ImagePicker.pickImage(source: ImageSource.gallery)
                               .then((file) {
                             setState(() {
                               editedColection.image = file.path;
                             });
                           });
                         },
-                        child: Container(
-                          height: 60.0,
-                          width: 350.0,
-                          padding: const EdgeInsets.all(4.0),
-                          decoration: const BoxDecoration(
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(8.0)),
-                            color: CustomColors.light,
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: const [
-                              Text(
-                                "Imagem",
-                                style: TextStyle(
-                                  color: CustomColors.dark,
-                                  fontSize: 20.0,
-                                ),
-                              ),
-                              Icon(
-                                Icons.attach_file,
-                                color: CustomColors.dark,
-                              ),
-                            ],
-                          ),
-                        ),
+                        height: 60.0,
+                        width: 350.0,
                       ),
                       const SizedBox(height: 16.0),
-                      GestureDetector(
+                      CustomButton(
                         onTap: () async {
                           if (nameController.text.isNotEmpty) {
                             if (collection != null) {
@@ -407,27 +335,9 @@ class _CollectionPageState extends State<CollectionPage> {
                             );
                           }
                         },
-                        child: FittedBox(
-                          fit: BoxFit.fitWidth,
-                          child: Container(
-                            alignment: Alignment.center,
-                            padding: const EdgeInsets.all(4.0),
-                            decoration: const BoxDecoration(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(8.0)),
-                              color: CustomColors.light,
-                            ),
-                            height: 60.0,
-                            width: 100.0,
-                            child: const Text(
-                              "Salvar",
-                              style: TextStyle(
-                                color: CustomColors.dark,
-                                fontSize: 20.0,
-                              ),
-                            ),
-                          ),
-                        ),
+                        height: 60.0,
+                        width: 100.0,
+                        text: "Salvar",
                       ),
                     ],
                   ),
