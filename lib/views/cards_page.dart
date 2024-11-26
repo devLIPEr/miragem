@@ -12,12 +12,6 @@ import 'package:miragem/helper/collection_helper.dart';
 
 import '../common/custom_colors.dart';
 
-/*
-Quando for retornar com o Navigator.pop(context),
-retorne a quantidade de cartas adicionadas(+)/removidas(-)
-Navigator.pop(context, cardsAdded);
-*/
-
 class CardPage extends StatefulWidget {
   final Collection collection;
 
@@ -35,9 +29,11 @@ class _CardPageState extends State<CardPage> {
   String cardName = "";
   String cardImage = "";
   String cardQuantity = "";
+  String zoomCardImage = "";
 
   bool editing = false;
   bool bottomSheetOnScreen = false;
+  bool zoomCard = false;
 
   TextEditingController nameController = TextEditingController();
   TextEditingController qntController = TextEditingController();
@@ -61,6 +57,7 @@ class _CardPageState extends State<CardPage> {
     cardHelper.getAllCards(widget.collection.id).then((list) {
       setState(() {
         cards = list;
+        zoomCardImage = cards[0].img;
         builtCards = buildCards(context);
       });
     });
@@ -91,7 +88,65 @@ class _CardPageState extends State<CardPage> {
         bottomSheetOnScreen = true;
         addCard(context, -1);
       }),
-      body: builtCards,
+      body: Stack(
+        children: [
+          builtCards,
+          Visibility(
+            visible: zoomCard,
+            child: Positioned(
+              left: MediaQuery.of(context).size.width * 0.5 -
+                  (MediaQuery.of(context).size.width * 0.9) / 2,
+              top: MediaQuery.of(context).size.height * 0.5 -
+                  (MediaQuery.of(context).size.width * 0.9) * 1.25,
+              child: Container(
+                width: MediaQuery.of(context).size.width * 0.9,
+                height: MediaQuery.of(context).size.height * 0.9,
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: FileImage(File(zoomCardImage)),
+                  ),
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+      // body: SingleChildScrollView(
+      //   child: Column(
+      //     children: [
+      //       SizedBox(
+      //         height: MediaQuery.of(context).size.height,
+      //         child: builtCards,
+      //       ),
+      //       Visibility(
+      //         visible: true,
+      //         child: SizedBox(
+      //           height: MediaQuery.of(context).size.height,
+      //           child: Stack(
+      //             children: [
+      //               Positioned(
+      //                 left: MediaQuery.of(context).size.width * 0.5 -
+      //                     (MediaQuery.of(context).size.width * 0.9) / 2,
+      //                 top: MediaQuery.of(context).size.height * 0.5 -
+      //                     (MediaQuery.of(context).size.height * 0.5) / 2,
+      //                 child: Container(
+      //                   width: MediaQuery.of(context).size.width * 0.9,
+      //                   decoration: BoxDecoration(
+      //                     image: DecorationImage(
+      //                       image: FileImage(File(zoomCardImage)),
+      //                     ),
+      //                     borderRadius: BorderRadius.circular(10.0),
+      //                   ),
+      //                 ),
+      //               ),
+      //             ],
+      //           ),
+      //         ),
+      //       ),
+      //     ],
+      //   ),
+      // ),
     );
   }
 
@@ -444,6 +499,18 @@ class _CardPageState extends State<CardPage> {
             onTap: () {
               bottomSheetOnScreen = true;
               addCard(context, index);
+            },
+            onLongPress: () {
+              setState(() {
+                zoomCard = card.img != "";
+                zoomCardImage = card.img;
+              });
+            },
+            onLongPressEnd: (details) {
+              setState(() {
+                zoomCardImage = "";
+                zoomCard = false;
+              });
             },
             child: Stack(
               children: <Widget>[
