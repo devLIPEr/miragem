@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:miragem/common/custom_colors.dart';
 
 class CustomButton extends StatelessWidget {
-  const CustomButton({Key key, this.onTap, this.height, this.width, this.text})
+  const CustomButton(
+      {Key key, this.onTap, this.height, this.width, this.text, this.textColor})
       : super(key: key);
   final Function() onTap;
   final double height;
   final double width;
   final String text;
+  final Color textColor;
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +28,7 @@ class CustomButton extends StatelessWidget {
           ),
           child: Text(
             text,
-            style: const TextStyle(color: CustomColors.dark, fontSize: 20),
+            style: TextStyle(color: textColor, fontSize: 20),
           ),
         ),
       ),

@@ -7,6 +7,7 @@ class CustomTextField extends StatelessWidget {
       this.controller,
       this.hintText,
       this.obscureText,
+      this.keyboardType,
       this.height,
       this.width,
       this.onChanged})
@@ -14,6 +15,7 @@ class CustomTextField extends StatelessWidget {
   final controller;
   final String hintText;
   final bool obscureText;
+  final TextInputType keyboardType;
   final double height;
   final double width;
   final Function(dynamic) onChanged;
@@ -32,6 +34,7 @@ class CustomTextField extends StatelessWidget {
         cursorColor: CustomColors.dark,
         controller: controller,
         obscureText: obscureText,
+        keyboardType: keyboardType,
         decoration: InputDecoration(
           border: InputBorder.none,
           focusColor: CustomColors.dark,

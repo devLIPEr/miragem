@@ -3,6 +3,10 @@ import 'dart:io';
 import 'package:flutter/material.dart' hide Card;
 import 'package:image_picker/image_picker.dart';
 import 'package:miragem/common/alert.dart';
+import 'package:miragem/components/add_button.dart';
+import 'package:miragem/components/custom_button.dart';
+import 'package:miragem/components/custom_imagepicker.dart';
+import 'package:miragem/components/custom_textfield.dart';
 import 'package:miragem/helper/card_helper.dart';
 import 'package:miragem/helper/collection_helper.dart';
 
@@ -39,7 +43,6 @@ class _CardPageState extends State<CardPage> {
   TextEditingController qntController = TextEditingController();
 
   Widget builtCards = Container();
-  Widget imageSelection = Container();
 
   int cardsAdded = 0;
 
@@ -84,17 +87,10 @@ class _CardPageState extends State<CardPage> {
         elevation: 0.0,
       ),
       backgroundColor: CustomColors.background,
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          bottomSheetOnScreen = true;
-          addCard(context, -1);
-        },
-        backgroundColor: CustomColors.highlight,
-        child: const Icon(
-          Icons.add,
-          color: CustomColors.dark,
-        ),
-      ),
+      floatingActionButton: AddButton(onPressed: (context) {
+        bottomSheetOnScreen = true;
+        addCard(context, -1);
+      }),
       body: builtCards,
     );
   }
@@ -137,126 +133,77 @@ class _CardPageState extends State<CardPage> {
               backgroundColor: CustomColors.highlight,
               builder: (context) {
                 const double height = 60.0;
-                imageSelection = GestureDetector(
-                  onTap: () {
-                    ImagePicker()
-                        .pickImage(source: ImageSource.gallery)
-                        .then((file) async {
-                      if (file != null) {
-                        setState(() {
-                          cardImage = file.path;
-                        });
-                      }
-                    });
-                  },
-                  child: Container(
-                    height: height,
-                    width: MediaQuery.of(context).size.width * 0.425,
-                    decoration: BoxDecoration(
-                      color: CustomColors.light,
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                    child: Stack(
-                      children: [
-                        Align(
-                          alignment: Alignment.center,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              const Text("Imagem"),
-                              (cardImage == "")
-                                  ? const Icon(Icons.attach_file)
-                                  : Image.file(File(cardImage)),
-                            ],
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                );
+
                 List<Widget> buttons = [
-                  Container(
+                  CustomButton(
                     height: height,
                     width: 100.0,
-                    decoration: BoxDecoration(
-                      color: CustomColors.light,
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                    child: TextButton(
-                      onPressed: () {
-                        if (cardName == "") {
-                          customAlert(
-                            context,
-                            "O campo nome da carta é obrigatório",
-                            25.0,
-                            "Insira um nome para salvar",
-                            20.0,
-                            [
-                              ElevatedButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                                style: ElevatedButton.styleFrom(
-                                    backgroundColor: CustomColors.dark),
-                                child: const Text(
-                                  "Ok!",
-                                  style: TextStyle(
-                                      color: CustomColors.light,
-                                      fontSize: 16.0),
-                                ),
-                              )
-                            ],
-                          );
+                    text: "Salvar",
+                    textColor: CustomColors.dark,
+                    onTap: () {
+                      if (cardName == "") {
+                        customAlert(
+                          context,
+                          "O campo nome da carta é obrigatório",
+                          25.0,
+                          "Insira um nome para salvar",
+                          20.0,
+                          [
+                            ElevatedButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              style: ElevatedButton.styleFrom(
+                                  backgroundColor: CustomColors.dark),
+                              child: const Text(
+                                "Ok!",
+                                style: TextStyle(
+                                    color: CustomColors.light, fontSize: 16.0),
+                              ),
+                            )
+                          ],
+                        );
+                      } else {
+                        Card newCard = Card();
+                        newCard.name = cardName;
+                        newCard.quality = cardQuality;
+                        newCard.quantity =
+                            cardQuantity == "" ? 0 : int.parse(cardQuantity);
+                        newCard.idiom = cardIdiom;
+                        newCard.img = cardImage;
+                        newCard.collectionId = widget.collection.id;
+                        if (index != -1) {
+                          newCard.id = cards[index].id;
+                          cardHelper.updateCard(newCard);
                         } else {
-                          Card newCard = Card();
-                          newCard.name = cardName;
-                          newCard.quality = cardQuality;
-                          newCard.quantity =
-                              cardQuantity == "" ? 0 : int.parse(cardQuantity);
-                          newCard.idiom = cardIdiom;
-                          newCard.img = cardImage;
-                          newCard.collectionId = widget.collection.id;
-                          if (index != -1) {
-                            newCard.id = cards[index].id;
-                            cardHelper.updateCard(newCard);
-                          } else {
-                            cardsAdded++;
-                            cardHelper.saveCard(newCard);
-                            Collection updatedCollection = Collection();
-                            updatedCollection.amount =
-                                widget.collection.amount + cardsAdded;
-                            updatedCollection.id = widget.collection.id;
-                            updatedCollection.image = widget.collection.image;
-                            updatedCollection.name = widget.collection.name;
-                            collectionHelper
-                                .updateCollection(updatedCollection);
-                          }
-                          setState(() {
-                            getAllCards();
-                            builtCards = buildCards(context);
-                          });
-                          editing = false;
-                          Navigator.pop(context);
+                          cardsAdded++;
+                          cardHelper.saveCard(newCard);
+                          Collection updatedCollection = Collection();
+                          updatedCollection.amount =
+                              widget.collection.amount + cardsAdded;
+                          updatedCollection.id = widget.collection.id;
+                          updatedCollection.image = widget.collection.image;
+                          updatedCollection.name = widget.collection.name;
+                          collectionHelper.updateCollection(updatedCollection);
                         }
-                      },
-                      child: const Text(
-                        "Salvar",
-                        style:
-                            TextStyle(fontSize: 22.0, color: CustomColors.dark),
-                      ),
-                    ),
-                  )
+                        setState(() {
+                          getAllCards();
+                          builtCards = buildCards(context);
+                        });
+                        editing = false;
+                        Navigator.pop(context);
+                      }
+                    },
+                  ),
                 ];
                 if (index != -1) {
-                  buttons.add(Container(
-                    height: height,
-                    width: 100.0,
-                    decoration: BoxDecoration(
-                      color: CustomColors.light,
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                    child: TextButton(
-                      onPressed: () {
+                  buttons.add(
+                    CustomButton(
+                      height: height,
+                      width: 100.0,
+                      text: "Excluir",
+                      textColor: Colors.red,
+                      onTap: () {
                         cardHelper.deleteCard(cards[index].id).then(
                           (value) {
                             setState(() {
@@ -281,42 +228,22 @@ class _CardPageState extends State<CardPage> {
                           },
                         );
                       },
-                      child: const Text(
-                        "Excluir",
-                        style: TextStyle(fontSize: 22.0, color: Colors.red),
-                      ),
                     ),
-                  ));
+                  );
                 }
                 return Column(
                   children: <Widget>[
                     Padding(
                       padding: const EdgeInsets.only(top: 20.0),
-                      child: SizedBox(
+                      child: CustomTextField(
+                        controller: nameController,
                         height: height,
                         width: MediaQuery.of(context).size.width * 0.9,
-                        child: TextField(
-                          onChanged: (value) {
-                            cardName = value;
-                          },
-                          controller: nameController,
-                          cursorColor: CustomColors.highlight,
-                          decoration: InputDecoration(
-                            constraints: const BoxConstraints.expand(),
-                            filled: true,
-                            labelText: "Nome da carta",
-                            labelStyle:
-                                const TextStyle(color: CustomColors.dark),
-                            floatingLabelStyle: const TextStyle(
-                                color: CustomColors.dark,
-                                fontWeight: FontWeight.bold),
-                            fillColor: CustomColors.light,
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10.0),
-                              borderSide: BorderSide.none,
-                            ),
-                          ),
-                        ),
+                        hintText: "Nome da carta",
+                        obscureText: false,
+                        onChanged: (value) {
+                          cardName = value;
+                        },
                       ),
                     ),
                     Padding(
@@ -377,31 +304,16 @@ class _CardPageState extends State<CardPage> {
                             SizedBox(
                                 width:
                                     MediaQuery.of(context).size.width * 0.05),
-                            SizedBox(
+                            CustomTextField(
+                              controller: qntController,
                               height: height,
                               width: MediaQuery.of(context).size.width * 0.425,
-                              child: TextField(
-                                onChanged: (value) {
-                                  cardQuantity = value;
-                                },
-                                controller: qntController,
-                                cursorColor: CustomColors.highlight,
-                                keyboardType: TextInputType.number,
-                                decoration: InputDecoration(
-                                  filled: true,
-                                  labelText: "Quantidade",
-                                  labelStyle:
-                                      const TextStyle(color: CustomColors.dark),
-                                  floatingLabelStyle: const TextStyle(
-                                      color: CustomColors.dark,
-                                      fontWeight: FontWeight.bold),
-                                  fillColor: CustomColors.light,
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(10.0),
-                                    borderSide: BorderSide.none,
-                                  ),
-                                ),
-                              ),
+                              hintText: "Quantidade",
+                              obscureText: false,
+                              keyboardType: TextInputType.number,
+                              onChanged: (value) {
+                                cardQuantity = value;
+                              },
                             ),
                           ],
                         ),
@@ -451,7 +363,23 @@ class _CardPageState extends State<CardPage> {
                             SizedBox(
                                 width:
                                     MediaQuery.of(context).size.width * 0.05),
-                            imageSelection,
+                            CustomImagePicker(
+                              onTap: () {
+                                return ImagePicker()
+                                    .pickImage(source: ImageSource.gallery)
+                                    .then((file) {
+                                  if (file != null) {
+                                    setState(() {
+                                      cardImage = file.path;
+                                    });
+                                    return file.path;
+                                  }
+                                });
+                              },
+                              height: height,
+                              width: MediaQuery.of(context).size.width * 0.425,
+                              image: cardImage,
+                            ),
                           ],
                         ),
                       ),

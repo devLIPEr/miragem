@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:miragem/common/alert.dart';
 import 'package:miragem/common/custom_colors.dart';
+import 'package:miragem/components/add_button.dart';
 import 'package:miragem/components/custom_button.dart';
 import 'package:miragem/components/custom_imagepicker.dart';
 import 'package:miragem/components/custom_textfield.dart';
@@ -19,9 +20,6 @@ class CollectionPage extends StatefulWidget {
 
 class _CollectionPageState extends State<CollectionPage> {
   CollectionHelper helper = CollectionHelper();
-  // List<Collection> collections = [
-  //   Collection.fromMap({idColumn: 0, nameColumn: "Col1", amountColumn: 12})
-  // ];
   List<Collection> collections = [];
   TextEditingController nameController = TextEditingController();
   bool collectionEdited = false;
@@ -53,20 +51,7 @@ class _CollectionPageState extends State<CollectionPage> {
         centerTitle: true,
         elevation: 0,
       ),
-      floatingActionButton: SizedBox(
-        // https://stackoverflow.com/questions/52786652/how-to-change-the-size-of-floatingactionbutton
-        width: 64.0,
-        height: 64.0,
-        child: FittedBox(
-          child: FloatingActionButton(
-            backgroundColor: CustomColors.light,
-            onPressed: () {
-              showOpts(context);
-            },
-            child: const Icon(Icons.add, color: CustomColors.dark, size: 32.0),
-          ),
-        ),
-      ),
+      floatingActionButton: AddButton(onPressed: showOpts),
       body: Container(
         color: CustomColors.background,
         child: ListView.builder(
@@ -109,7 +94,7 @@ class _CollectionPageState extends State<CollectionPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SizedBox(
-                      width: 250,
+                      width: 250.0,
                       child: Text(
                         collection.name,
                         overflow: TextOverflow.ellipsis,
@@ -151,34 +136,28 @@ class _CollectionPageState extends State<CollectionPage> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Container(
-                    height: 60.0,
-                    decoration: const BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                      color: CustomColors.light,
-                    ),
-                    width: 350.0,
-                    child: TextButton(
-                      onPressed: () async {
-                        // go to card page
-                        final int cardsAdded = await Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => CardPage(
-                                    collections[index],
-                                  )),
-                        );
+                  CustomButton(
+                    onTap: () async {
+                      // go to card page
+                      await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => CardPage(
+                                  collections[index],
+                                )),
+                      );
 
-                        setState(() {
-                          getAllCollections();
-                        });
+                      setState(() {
+                        getAllCollections();
+                      });
 
                       // ignore: use_build_context_synchronously
                       Navigator.pop(context);
                     },
                     height: 60.0,
-                    width: 350.0,
+                    width: MediaQuery.of(context).size.width * 0.9,
                     text: "Visualizar",
+                    textColor: CustomColors.dark,
                   ),
                   const SizedBox(height: 16.0),
                   CustomButton(
@@ -187,8 +166,9 @@ class _CollectionPageState extends State<CollectionPage> {
                       showOpts(context, collection: collections[index]);
                     },
                     height: 60.0,
-                    width: 350.0,
+                    width: MediaQuery.of(context).size.width * 0.9,
                     text: "Editar",
+                    textColor: CustomColors.dark,
                   ),
                   const SizedBox(height: 16.0),
                   CustomButton(
@@ -238,8 +218,9 @@ class _CollectionPageState extends State<CollectionPage> {
                       );
                     },
                     height: 60.0,
-                    width: 350.0,
+                    width: MediaQuery.of(context).size.width * 0.9,
                     text: "Deletar",
+                    textColor: CustomColors.dark,
                   ),
                 ],
               ),
@@ -276,8 +257,9 @@ class _CollectionPageState extends State<CollectionPage> {
                         controller: nameController,
                         hintText: "Nome da Coleção...",
                         obscureText: false,
+                        keyboardType: TextInputType.text,
                         height: 60.0,
-                        width: 350.0,
+                        width: MediaQuery.of(context).size.width * 0.9,
                         onChanged: (value) {
                           collectionEdited = true;
                           setState(() {
@@ -288,15 +270,18 @@ class _CollectionPageState extends State<CollectionPage> {
                       const SizedBox(height: 16.0),
                       CustomImagePicker(
                         onTap: () {
-                          ImagePicker().pickImage(source: ImageSource.gallery)
+                          return ImagePicker()
+                              .pickImage(source: ImageSource.gallery)
                               .then((file) {
                             setState(() {
                               editedColection.image = file.path;
                             });
+                            return file.path;
                           });
                         },
                         height: 60.0,
-                        width: 350.0,
+                        width: MediaQuery.of(context).size.width * 0.9,
+                        image: "",
                       ),
                       const SizedBox(height: 16.0),
                       CustomButton(
@@ -308,6 +293,7 @@ class _CollectionPageState extends State<CollectionPage> {
                               editedColection.amount = 0;
                               await helper.saveCollection(editedColection);
                             }
+                            // ignore: use_build_context_synchronously
                             Navigator.pop(context);
                             getAllCollections();
                           } else {
@@ -338,6 +324,7 @@ class _CollectionPageState extends State<CollectionPage> {
                         height: 60.0,
                         width: 100.0,
                         text: "Salvar",
+                        textColor: CustomColors.dark,
                       ),
                     ],
                   ),
