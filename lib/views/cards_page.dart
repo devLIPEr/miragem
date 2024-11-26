@@ -112,41 +112,6 @@ class _CardPageState extends State<CardPage> {
           ),
         ],
       ),
-      // body: SingleChildScrollView(
-      //   child: Column(
-      //     children: [
-      //       SizedBox(
-      //         height: MediaQuery.of(context).size.height,
-      //         child: builtCards,
-      //       ),
-      //       Visibility(
-      //         visible: true,
-      //         child: SizedBox(
-      //           height: MediaQuery.of(context).size.height,
-      //           child: Stack(
-      //             children: [
-      //               Positioned(
-      //                 left: MediaQuery.of(context).size.width * 0.5 -
-      //                     (MediaQuery.of(context).size.width * 0.9) / 2,
-      //                 top: MediaQuery.of(context).size.height * 0.5 -
-      //                     (MediaQuery.of(context).size.height * 0.5) / 2,
-      //                 child: Container(
-      //                   width: MediaQuery.of(context).size.width * 0.9,
-      //                   decoration: BoxDecoration(
-      //                     image: DecorationImage(
-      //                       image: FileImage(File(zoomCardImage)),
-      //                     ),
-      //                     borderRadius: BorderRadius.circular(10.0),
-      //                   ),
-      //                 ),
-      //               ),
-      //             ],
-      //           ),
-      //         ),
-      //       ),
-      //     ],
-      //   ),
-      // ),
     );
   }
 
