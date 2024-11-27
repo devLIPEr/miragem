@@ -29,11 +29,9 @@ class _CardPageState extends State<CardPage> {
   String cardName = "";
   String cardImage = "";
   String cardQuantity = "";
-  String zoomCardImage = "";
 
   bool editing = false;
   bool bottomSheetOnScreen = false;
-  bool zoomCard = false;
 
   TextEditingController nameController = TextEditingController();
   TextEditingController qntController = TextEditingController();
@@ -57,7 +55,6 @@ class _CardPageState extends State<CardPage> {
     cardHelper.getAllCards(widget.collection.id).then((list) {
       setState(() {
         cards = list;
-        zoomCardImage = cards[0].img;
         builtCards = buildCards(context);
       });
     });
@@ -88,30 +85,7 @@ class _CardPageState extends State<CardPage> {
         bottomSheetOnScreen = true;
         addCard(context, -1);
       }),
-      body: Stack(
-        children: [
-          builtCards,
-          Visibility(
-            visible: zoomCard,
-            child: Positioned(
-              left: MediaQuery.of(context).size.width * 0.5 -
-                  (MediaQuery.of(context).size.width * 0.9) / 2,
-              top: MediaQuery.of(context).size.height * 0.5 -
-                  (MediaQuery.of(context).size.width * 0.9) * 1.25,
-              child: Container(
-                width: MediaQuery.of(context).size.width * 0.9,
-                height: MediaQuery.of(context).size.height * 0.9,
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: FileImage(File(zoomCardImage)),
-                  ),
-                  borderRadius: BorderRadius.circular(10.0),
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
+      body: builtCards,
     );
   }
 
@@ -466,16 +440,26 @@ class _CardPageState extends State<CardPage> {
               addCard(context, index);
             },
             onLongPress: () {
-              setState(() {
-                zoomCard = card.img != "";
-                zoomCardImage = card.img;
-              });
-            },
-            onLongPressEnd: (details) {
-              setState(() {
-                zoomCardImage = "";
-                zoomCard = false;
-              });
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return SimpleDialog(
+                    backgroundColor: Colors.transparent,
+                    children: [
+                      Container(
+                        width: MediaQuery.of(context).size.width * 0.9,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                        child: Image.file(
+                          File(card.img),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              );
             },
             child: Stack(
               children: <Widget>[
