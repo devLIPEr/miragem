@@ -94,7 +94,7 @@ class _CollectionPageState extends State<CollectionPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SizedBox(
-                      width: 250.0,
+                      width: MediaQuery.of(context).size.width * 0.8 - 100.0,
                       child: Text(
                         collection.name,
                         overflow: TextOverflow.ellipsis,
