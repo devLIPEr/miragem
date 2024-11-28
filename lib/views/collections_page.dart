@@ -142,9 +142,10 @@ class _CollectionPageState extends State<CollectionPage> {
                       await Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => CardPage(
-                                  collections[index],
-                                )),
+                          builder: (context) => CardPage(
+                            collections[index],
+                          ),
+                        ),
                       );
 
                       setState(() {

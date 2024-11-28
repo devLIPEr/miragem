@@ -66,7 +66,7 @@ class _CardPageState extends State<CardPage> {
       appBar: AppBar(
         leading: BackButton(
           onPressed: () {
-            Navigator.pop(context, cardsAdded);
+            Navigator.pop(context);
           },
         ),
         centerTitle: true,
@@ -170,7 +170,7 @@ class _CardPageState extends State<CardPage> {
                           newCard.id = cards[index].id;
                           cardHelper.updateCard(newCard);
                         } else {
-                          cardsAdded++;
+                          cardsAdded += newCard.quantity;
                           cardHelper.saveCard(newCard);
                           Collection updatedCollection = Collection();
                           updatedCollection.amount =
@@ -198,28 +198,70 @@ class _CardPageState extends State<CardPage> {
                       text: "Excluir",
                       textColor: Colors.red,
                       onTap: () {
-                        cardHelper.deleteCard(cards[index].id).then(
-                          (value) {
-                            setState(() {
-                              cardsAdded--;
-                              Collection updatedCollection = Collection();
-                              updatedCollection.amount =
-                                  widget.collection.amount + cardsAdded;
-                              updatedCollection.id = widget.collection.id;
-                              updatedCollection.image = widget.collection.image;
-                              updatedCollection.name = widget.collection.name;
-                              collectionHelper
-                                  .updateCollection(updatedCollection)
-                                  .then(
-                                (value) {
-                                  getAllCards();
-                                  builtCards = buildCards(context);
-                                  editing = false;
-                                  Navigator.pop(context);
-                                },
-                              );
-                            });
-                          },
+                        customAlert(
+                          context,
+                          "Tem certeza?",
+                          24.0,
+                          "Você tem certeza que quer excluir a carta ${cards[index].name}?\nEste processo não pode ser revertido!",
+                          20.0,
+                          [
+                            ElevatedButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                                Navigator.pop(context);
+                              },
+                              style: ElevatedButton.styleFrom(
+                                  backgroundColor: CustomColors.dark),
+                              child: const Text(
+                                "Cancelar",
+                                style: TextStyle(
+                                  color: CustomColors.light,
+                                  fontSize: 16.0,
+                                ),
+                              ),
+                            ),
+                            ElevatedButton(
+                              onPressed: () {
+                                cardHelper.deleteCard(cards[index].id).then(
+                                  (value) {
+                                    setState(() {
+                                      cardsAdded -= cards[index].quantity;
+                                      Collection updatedCollection =
+                                          Collection();
+                                      updatedCollection.amount =
+                                          widget.collection.amount + cardsAdded;
+                                      updatedCollection.id =
+                                          widget.collection.id;
+                                      updatedCollection.image =
+                                          widget.collection.image;
+                                      updatedCollection.name =
+                                          widget.collection.name;
+                                      collectionHelper
+                                          .updateCollection(updatedCollection)
+                                          .then(
+                                        (value) {
+                                          getAllCards();
+                                          builtCards = buildCards(context);
+                                          editing = false;
+                                          Navigator.pop(context);
+                                          Navigator.pop(context);
+                                        },
+                                      );
+                                    });
+                                  },
+                                );
+                              },
+                              style: ElevatedButton.styleFrom(
+                                  backgroundColor: CustomColors.alert),
+                              child: const Text(
+                                "Deletar",
+                                style: TextStyle(
+                                  color: CustomColors.light,
+                                  fontSize: 16.0,
+                                ),
+                              ),
+                            ),
+                          ],
                         );
                       },
                     ),
