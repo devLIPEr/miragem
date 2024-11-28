@@ -63,22 +63,23 @@ class _CardPageState extends State<CardPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        leading: BackButton(
+      appBar: AppBar(leading: BackButton(
           onPressed: () {
             Navigator.pop(context);
           },
         ),
-        centerTitle: true,
+        toolbarHeight: 100.0,
+        backgroundColor: Colors.transparent,
+        flexibleSpace: const Image(
+          image: AssetImage('assets/imgs/appbarBG.jpg'),
+          fit: BoxFit.cover,
+        ),
         title: Text(
           collectionName,
-          style: const TextStyle(
-            color: CustomColors.dark,
-            fontSize: 30,
-          ),
+          style: TextStyle(color: CustomColors.dark, fontSize: 32.0),
         ),
-        backgroundColor: CustomColors.background,
-        elevation: 0.0,
+        centerTitle: true,
+        elevation: 4,
       ),
       backgroundColor: CustomColors.background,
       floatingActionButton: AddButton(onPressed: (context) {

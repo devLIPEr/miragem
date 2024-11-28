@@ -43,13 +43,17 @@ class _CollectionPageState extends State<CollectionPage> {
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 100.0,
-        backgroundColor: CustomColors.background,
+        backgroundColor: Colors.transparent,
+        flexibleSpace: const Image(
+          image: AssetImage('assets/imgs/appbarBG.jpg'),
+          fit: BoxFit.cover,
+        ),
         title: const Text(
           "COLEÇÕES",
           style: TextStyle(color: CustomColors.dark, fontSize: 32.0),
         ),
         centerTitle: true,
-        elevation: 0,
+        elevation: 4,
       ),
       floatingActionButton: AddButton(onPressed: showOpts),
       body: Container(
